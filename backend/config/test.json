@@ -1,0 +1,3 @@
+{
+  "database": "mongodb://localhost/polyfeedback_test"
+}
