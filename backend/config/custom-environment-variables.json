@@ -1,0 +1,5 @@
+{
+  "jwt":{
+    "privateKey": "JWT_PRIVATE_KEY"
+  }
+}

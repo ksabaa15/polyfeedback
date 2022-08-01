@@ -1,0 +1,11 @@
+{
+  "database": "",
+  "app": {
+    "port": 3000
+  },
+  "jwt": {
+    "privateKey": "",
+    "headerKey":"x-auth-token",
+    "algorithm": "HS256"
+  }
+}

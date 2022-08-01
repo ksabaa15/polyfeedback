@@ -12,11 +12,10 @@ Models a student user.
 
 Properties:
 
-| Name       | Type       | Description                                                                         |
-|------------|------------|-------------------------------------------------------------------------------------|
-| **_id**    | *ObjectId* | is the primary key, it is generated automatically whenever we create a new document |
-| **sciper** | *Number*   | is a unique student id assigned by the university                                   |
-
+| Name       | Type       | Description                                                                           |
+|------------|------------|---------------------------------------------------------------------------------------|
+| **_id**    | *ObjectId* | is the primary key, it is generated automatically whenever we create a new document   |
+| **sciper** | *String*   | is a unique student id assigned by the university, saved in the form of a salted hash |
 
 ### Course
 

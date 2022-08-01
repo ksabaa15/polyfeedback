@@ -24,8 +24,8 @@ const schema = new mongoose.Schema({
 
 function validate(review) {
   const joiSchema = Joi.object({
-    course: Joi.object(Joi.objectId()).required(),
-    user: Joi.object(Joi.objectId()).required(),
+    course: Joi.objectId().required(),
+    //user: No user property in POST body, we get it from authentication token.
     text: Joi.string().required().min(50).max(1000),
   });
   return joiSchema.validate(review);

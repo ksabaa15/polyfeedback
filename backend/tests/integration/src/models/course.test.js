@@ -1,6 +1,6 @@
 const config = require('config');
 const mongoose = require('mongoose');
-const { Course} = require('../../../../src/models/course');
+const { Course } = require('../../../../src/models/course');
 
 describe('Course', () => {
   let courseObj = {};
@@ -16,7 +16,7 @@ describe('Course', () => {
     courseObj = {
       code: 'PHYS-118',
       title: 'Building physics',
-      reviews: [mongoose.Types.ObjectId(), mongoose.Types.ObjectId()],
+      reviews: [new mongoose.Types.ObjectId(), new mongoose.Types.ObjectId()],
     };
   });
 
@@ -53,7 +53,6 @@ describe('Course', () => {
   });
   it('should successfully add course to database because wrong type of property `reviews`', async () => {
     courseObj.reviews = [123];
-    console.log(courseObj);
     const course = new Course(courseObj);
     courseObj.reviews = [];
     await expect(course.save()).rejects.toThrowError(/.*reviews.*/);

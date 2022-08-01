@@ -1,6 +1,6 @@
 const config = require('config');
 const mongoose = require('mongoose');
-const { Review} = require('../../../../src/models/review');
+const { Review } = require('../../../../src/models/review');
 
 describe('Review', () => {
   let reviewObj = {};
@@ -14,8 +14,8 @@ describe('Review', () => {
   beforeEach(async () => {
     await Review.deleteMany({});
     reviewObj = {
-      course: mongoose.Types.ObjectId(),
-      user: mongoose.Types.ObjectId(),
+      course: new mongoose.Types.ObjectId(),
+      user: new mongoose.Types.ObjectId(),
       text: 'neque egestas congue quisque egestas diam in arcu cursus euismod',
     };
   });
