@@ -4,7 +4,7 @@
   "description": "Polyfeedback REST API",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test jest --runInBand"
+    "test": "NODE_ENV=test jest --runInBand --coverage"
   },
   "repository": {
     "type": "git",
@@ -18,14 +18,18 @@
   "homepage": "https://github.com/ksabaa15/polyfeedback#readme",
   "dependencies": {
     "config": "^3.3.7",
+    "express": "^4.18.1",
+    "fawn": "^2.1.5",
     "joi": "^17.6.0",
     "joi-objectid": "^4.0.2",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.5.0"
   },
   "prettier": {
     "singleQuote": true
   },
   "devDependencies": {
-    "jest": "^28.1.3"
+    "jest": "^28.1.3",
+    "supertest": "^6.2.4"
   }
 }

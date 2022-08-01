@@ -1,3 +1,6 @@
 {
-  "database": "mongodb://localhost/polyfeedback_test"
+  "database": "mongodb://localhost/polyfeedback_test",
+  "jwt": {
+    "privateKey": "jwtPrivateKey"
+  }
 }

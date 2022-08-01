@@ -14,7 +14,7 @@ describe('User', () => {
   beforeEach(async () => {
     await User.deleteMany({});
     userObj = {
-      sciper: 269647,
+      sciper: 'XXXXXXXXXXXXX',
     };
   });
 
@@ -30,7 +30,7 @@ describe('User', () => {
     expect(validate(userObj).error).not.toBeUndefined();
   });
   it('should fail to add user to database because wrong type of property `sciper`', async () => {
-    userObj.sciper = 'abc';
+    userObj.sciper = [];
     const user = new User(userObj);
     await expect(user.save()).rejects.toThrowError(/.*sciper.*/);
     expect(validate(userObj).error).not.toBeUndefined();

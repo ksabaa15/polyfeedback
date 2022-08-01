@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
 
 const schema = new mongoose.Schema({
   code: {
@@ -26,14 +24,4 @@ const schema = new mongoose.Schema({
   ],
 });
 
-function validate(review) {
-  const joiSchema = Joi.object({
-    code: Joi.string().required().min(6).max(12),
-    title: Joi.string().required().min(4).max(148),
-    reviews: Joi.array().items(Joi.objectId())
-  });
-  return joiSchema.validate(review);
-}
-
 module.exports.Course = mongoose.model('Course', schema);
-module.exports.validate = validate;
