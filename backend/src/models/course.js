@@ -26,16 +26,12 @@ const schema = new mongoose.Schema({
   ],
 });
 
-const joiSchema = Joi.object({
-  code: Joi.string().required().min(6).max(12),
-  title: Joi.string().required().min(4).max(148),
-  reviews: Joi.array().items(
-    Joi.object({
-      review: Joi.objectId(),
-    })
-  ),
-});
 function validate(review) {
+  const joiSchema = Joi.object({
+    code: Joi.string().required().min(6).max(12),
+    title: Joi.string().required().min(4).max(148),
+    reviews: Joi.array().items(Joi.objectId())
+  });
   return joiSchema.validate(review);
 }
 
