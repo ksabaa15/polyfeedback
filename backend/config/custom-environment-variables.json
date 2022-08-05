@@ -1,5 +1,8 @@
 {
   "jwt":{
     "privateKey": "JWT_PRIVATE_KEY"
+  },
+  "firebase": {
+    "credential": "GOOGLE_APPLICATION_CREDENTIALS"
   }
 }

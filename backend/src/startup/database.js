@@ -1,20 +1,18 @@
-const mongoose = require('mongoose');
+const app = require('firebase-admin/app');
 const config = require('config');
-const winston = require('winston');
-const Fawn = require('fawn');
+const path = require('path');
 
 module.exports = function () {
-  mongoose
-    .connect(config.database)
-    .then(() => winston.info(`Connected to MongoDB...`));
+  let firebaseCredentialPath = config.firebase.credential;
+  if (!path.isAbsolute(firebaseCredentialPath))
+    firebaseCredentialPath = path.join(
+      __dirname,
+      '../../',
+      firebaseCredentialPath
+    );
 
-  /**
-   *     Note: if you're running multiple apps connected to the same db (e.g. horizontal cloud scaling),
-   *     provide a string value for _collection that's unique to each app.
-   *     Do this to avoid a situation where one app rolls back the unfinished
-   *     transaction(s) of another app.
-   *
-   *     Fawn.init(db, _collection, options)
-   */
-  Fawn.init(config.database);
+  const serviceAccount = require(firebaseCredentialPath);
+  app.initializeApp({
+    credential: app.cert(serviceAccount),
+  });
 };

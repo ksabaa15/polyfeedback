@@ -4,25 +4,27 @@ Test cases based on [Jest](https://jestjs.io/), a javascript testing framework.
 
 ## Run
 
-To run the tests, please execute the following command:
+To run all the tests:
 
 ```shell
 npm test
 ```
 
+To run a particular test file or directory:
+
+```shell
+npm test -- /path/to/test/fileOrDirectory
+```
+
 ## Dependencies
 
-### NPM Dependencies
+### Node Dependencies
+
+To install all the node dependencies:
 
 ```shell
 npm install
 ```
-
-### Additional Dependencies
-
-* #### MongoDB 4.4
-
-    Please refere to the official [MongoDB 4.4 installation guide](https://www.mongodb.com/docs/v4.4/installation/).
 
 ## References
 

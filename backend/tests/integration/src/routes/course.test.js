@@ -1,16 +1,19 @@
 const request = require('supertest');
-const { Course } = require('../../../../src/models/course');
 const { app } = require('../../../../src/index');
-const mongoose = require('mongoose');
+const { Course } = require('../../../../src/models/course');
+const { deepClearCollection } = require('./firestoreUtil');
 
 describe('Course', () => {
   let courseObj = {
-    code: 'PHYS-118',
-    title: 'Building physics',
-    reviews: [new mongoose.Types.ObjectId(), new mongoose.Types.ObjectId()],
+    code: 'MATH-123',
+    title: 'Introduction to Mathematics',
+    teachers: ['Teacher A', 'Teacher B'],
   };
+  courseObj = new Course(courseObj.code, courseObj.title, courseObj.teachers);
+  const courseFirestore = courseObj.toFirestore();
+
   beforeEach(async () => {
-    await Course.deleteMany({});
+    await deepClearCollection(Course);
   });
 
   it('should return an empty array of courses', async () => {
@@ -20,23 +23,28 @@ describe('Course', () => {
   });
 
   it('should return the added course', async () => {
-    await Course.create(courseObj);
+    await Course.getCollectionRef()
+      .doc(courseFirestore.id)
+      .set(courseFirestore);
     const response = await request(app).get('/api/courses');
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toMatchObject(courseObj);
   });
 
-  it('should return status 404 (invalid objectID)', async () => {
+  it('should return status 404, invalid course ID', async () => {
     const response = await request(app).get('/api/courses/1234');
     expect(response.status).toBe(404);
     expect(response.text).toContain('Invalid Id');
   });
 
   it('should return the course with given id', async () => {
-    let course = await Course.create(courseObj);
-    course = await course.populate('reviews');
+    await Course.getCollectionRef()
+      .doc(courseFirestore.id)
+      .set(courseFirestore);
 
-    const response = await request(app).get(`/api/courses/${course._id}`);
-    expect(response.body[0]).toMatchObject(JSON.parse(JSON.stringify(course)));
+    const response = await request(app).get(
+      `/api/courses/${courseFirestore.id}`
+    );
+    expect(response.body).toMatchObject(courseObj);
   });
 });

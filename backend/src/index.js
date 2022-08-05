@@ -6,8 +6,8 @@ const app = express();
 
 require('./startup/logging')();
 require('./startup/config')();
-require('./startup/routes')(app);
 require('./startup/database')();
+require('./startup/routes')(app);
 require('./startup/validation')();
 
 const port = process.env.PORT || config.app.port;
