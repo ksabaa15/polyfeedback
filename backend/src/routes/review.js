@@ -1,51 +1,40 @@
 const router = require('express').Router();
-const mongoose = require('mongoose');
-const Fawn = require('fawn');
+const db = require('firebase-admin/firestore').getFirestore();
 const jwt = require('jsonwebtoken');
 const config = require('config');
-
 const { Review, validate } = require('../models/review');
-const { Course } = require('../../src/models/course');
-const { User } = require('../../src/models/user');
+const { Course } = require('../models/course');
+const { User } = require('../models/user');
+const mongoose = require('mongoose');
 
+// No need for an atomic transaction: courses and users do not get deleted for now.
 router.post('/', async (req, res) => {
-  let review = req.body;
-
-  const { error } = validate(review);
+  const reviewInput = req.body;
+  const { error } = validate(reviewInput);
   if (error) return res.status(400).send(error.message);
 
-  if (!(await foundDocument(review.course, Course)))
-    return res.status(400).send('Course id does not exist');
-
+  //TODO: userID should be passed throw the request processing pipeline from the authentication middleware (e.g. req.userId)
   const token = req.header(config.jwt.headerKey);
   const decoded = jwt.decode(token, { complete: true });
-  review.user = decoded.payload.userID;
+  const userID = decoded.payload.userID;
+
+  // TODO to be removed: user id must be valid because it will be already tested in authentication middleware
+  if (!mongoose.Types.ObjectId.isValid(userID))
+    return res.status(400).send('User Id is not valid.');
+
+  const review = new Review(reviewInput.courseId, userID, reviewInput.text);
+
+  const courseDoc = await Course.getCollectionRef().doc(review.courseId).get();
+  if (!courseDoc.exists)
+    return res.status(400).send('Course id does not exist');
+
   // TODO to be removed: user must exist because it will be already tested in authentication middleware
-  if (!(await foundDocument(review.user, User)))
-    return res.status(400).send('User id does not exist');
+  const userDoc = await User.getCollectionRef().doc(review.userId).get();
+  if (!userDoc.exists) return res.status(400).send('User id does not exist');
 
-  review = new Review(review); // To create property `_id`
+  await review.getDocumentRef().set(review.toFirestore());
 
-  // Two Phase Commit (Transaction)
-  try {
-    await Fawn.Task()
-      .save('reviews', review)
-      .update(
-        'courses',
-        { _id: review.course },
-        { $addToSet: { reviews: review._id } }
-      )
-      .run({ useMongoose: true });
-    return res.send(review);
-  } catch (err) {
-    return res.status(500).send(err.message);
-  }
+  return res.send(review);
 });
-
-async function foundDocument(documentId, Model) {
-  if (!mongoose.Types.ObjectId.isValid(documentId)) return false;
-  const result = await Model.findById(documentId);
-  return result;
-}
 
 module.exports = router;

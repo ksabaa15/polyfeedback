@@ -1,35 +1,61 @@
 const mongoose = require('mongoose');
+const firestore = require('firebase-admin/firestore');
 const Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
+const db = firestore.getFirestore();
 
-const schema = new mongoose.Schema({
-  course: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course',
-    required: true,
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  text: {
-    type: String,
-    required: true,
-    minLength: [50, 'Review text is too short.'],
-    maxLength: [1000, 'Review text is too long.'],
-    trim: true,
-  },
-});
+class Review {
+  static _COLLECTION_NAME = 'reviews';
+  static _SUB_COLLECTION_CLASSES = [];
 
+  constructor(courseId, userId, text, date = null, id = null) {
+    this.id = id || new mongoose.Types.ObjectId().toString();
+    this.date = date || firestore.Timestamp.now().toDate();
+    this.courseId = courseId;
+    this.userId = userId;
+    this.text = text;
+  }
+
+  static fromFirestore(snapshot) {
+    if (!snapshot.exists) return null;
+    const data = snapshot.data();
+    return new Review(
+      data.courseId,
+      data.userId,
+      data.text,
+      data.time.toDate(),
+      snapshot.id
+    );
+  }
+
+  toFirestore() {
+    return {
+      id: this.id,
+      courseId: this.courseId,
+      userId: this.userId,
+      text: this.text,
+      time: firestore.Timestamp.fromDate(this.date),
+    };
+  }
+  getCollectionRef() {
+    return db
+      .collection('courses')
+      .doc(this.courseId)
+      .collection(Review._COLLECTION_NAME);
+  }
+  getDocumentRef() {
+    return this.getCollectionRef().doc(this.id);
+  }
+}
+
+// Validate User input
+// User id comes from request header, it is validated in the authentication middleware
 function validate(review) {
   const joiSchema = Joi.object({
-    course: Joi.objectId().required(),
-    //user: No user property in POST body, we get it from authentication token.
+    courseId: Joi.string(),
     text: Joi.string().required().min(50).max(1000),
   });
   return joiSchema.validate(review);
 }
 
-module.exports.Review = mongoose.model('Review', schema);
+module.exports.Review = Review;
 module.exports.validate = validate;

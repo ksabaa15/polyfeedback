@@ -1,10 +1,8 @@
 const config = require('config');
 module.exports = function () {
-  if (!config.jwt.privateKey)
-    throw new Error(
-      'No JWT private key was found, please set the corresponding environment variable and try again.'
-    );
+  if (!config.firebase.credential)
+    throw new Error('Fatal: No Firebase credentials was found.');
 
-  if (!config.database)
-    throw new Error('No MongoDB database address was found in configuration');
+  if (!config.jwt.privateKey)
+    throw new Error('Fatal: No JWT private key was found.');
 };
