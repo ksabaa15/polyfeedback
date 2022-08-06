@@ -1,11 +1,23 @@
 # Polyfeedback Backend
 
 ## Deployment for Development
+The section describes the various way you can deploy the app for development purposes.
 
-To run the app for development purposes, run the following command:
+### Standalone Deployment
 
+Please run the following command for a standalone deployment:
 ```shell
 npm start
+```
+### Docker deployment
+Please run the following command for a docker deployment:
+```shell
+docker build -t polyfeedback .
+docker run -it -p 3000:3000 polyfeedback
+```
+For an instant refresh development setup:
+```shell
+docker run -it -p 3000:3000 -v $(pwd):/app polyfeedback
 ```
 
 ## Environment Variables

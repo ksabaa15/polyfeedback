@@ -1,0 +1,6 @@
+coverage/
+documentation/
+logs/
+node_modules/
+.gitignore
+*.md
